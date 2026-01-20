@@ -2,44 +2,44 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const Dashboard = () => {
-    const [healthMetrics, setHealthMetrics] = useState([]);
+    const [healthData, setHealthData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchHealthMetrics = async () => {
+        const fetchHealthData = async () => {
             try {
-                const response = await axios.get('/api/health-metrics');
-                setHealthMetrics(response.data);
+                const response = await axios.get('/api/health-data');
+                setHealthData(response.data);
             } catch (err) {
-                setError('Failed to fetch health metrics');
+                setError('Failed to fetch health data');
             } finally {
                 setLoading(false);
             }
         };
-
-        fetchHealthMetrics();
+        fetchHealthData();
     }, []);
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
     return (
-        <div className="dashboard">
+        <div>
             <h1>User Dashboard</h1>
-            <div className="metrics">
-                {healthMetrics.length > 0 ? (
-                    healthMetrics.map((metric) => (
-                        <div key={metric.id} className="metric">
-                            <h2>{metric.title}</h2>
-                            <p>{metric.value}</p>
-                            <p>{metric.description}</p>
-                        </div>
-                    ))
-                ) : (
-                    <p>No health metrics available.</p>
-                )}
-            </div>
+            {healthData ? (
+                <div>
+                    <h2>Health Insights</h2>
+                    <ul>
+                        {healthData.map((data, index) => (
+                            <li key={index}>
+                                <strong>{data.title}</strong>: {data.value}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ) : (
+                <div>No health data available</div>
+            )}
         </div>
     );
 };
